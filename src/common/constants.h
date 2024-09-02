@@ -17,4 +17,4 @@ constexpr int SNAKE_Y = 20;
  * Server Constants
  ******************************************************************************/
 
-constexpr int BACKLOG = 10;
+constexpr int BACKLOG = 10; // The game only works with ONE client.

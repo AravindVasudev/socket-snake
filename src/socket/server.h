@@ -1,21 +1,26 @@
 #pragma once
 
-#include <iostream>
+#include <arpa/inet.h>
 #include <netinet/in.h>
-#include <sstream>
-#include <stdexcept>
-#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
+#include "../snake/game.h"
+
 class Server {
 private:
-  int serverSocket;
-  int port;
+  int port, serverSocket, clientSocket;
+  Game game;
 
-  void handleRequest(int clientSocket);
+  void startGameplay();
 
 public:
   Server(int port);
+  ~Server();
   void serve();
 };

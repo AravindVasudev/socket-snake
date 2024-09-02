@@ -1,14 +1,27 @@
 #include "game.h"
 
+#include <arpa/inet.h>
 #include <locale.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 #include <chrono>
+#include <iostream>
 
-#include "color.h"
 #include "../common/constants.h"
+#include "color.h"
 
-Game::Game() {
+// The original implementation does all the init stuff in the constructor.
+// Given we have to wait to establish the connect before starting the game,
+// Moved it to a separate fn. Both the server & the client would keep a game
+// object stack initialized & hence will be constructed right away once the
+// server starts and hence this workaround.
+// TODO: Add a game state to ensure run() cannot be called before init().
+void Game::init(const int sockfd) {
+  // Init opponent's socket.
+  socket = sockfd;
+
   // Init graphics.
   setlocale(LC_ALL, "");  // Get the terminal outta boomer-mode.
   initscr();
@@ -48,18 +61,38 @@ void Game::drawGameOver() {
   wclear(window);
   box(window, 0, 0);
   // TODO: Fix centering.
-  mvwprintw(window, WIDTH / 2 - 3, HEIGHT / 2 - 3, "You lost! Your score: %d", score);
+  mvwprintw(window, WIDTH / 2 - 3, HEIGHT / 2 - 3, "You lost! Your score: %d",
+            score);
   wrefresh(window);
 }
 
 void Game::run() {
   while (true) {
+    // Player's move.
     int input = getch();
     if (input == 'q') {
       break;
     }
 
-    // Reinit frame.
+    // Opponent's move. We currently only read one character.
+    // In the current impl, both instances play the game by themselves and
+    // only share the opponent's input. This works because the rand() is not
+    // seeded and both the instances generate pellets at the same location.
+    // Ideally, the instances should be sharing more info. Any drop in
+    // connection will disrupt the game instances.
+    int opponentMove = '\0';
+    int bytesRead =
+        recv(socket, &opponentMove, sizeof(opponentMove), MSG_DONTWAIT);
+    if (bytesRead > 0) {
+      // std::cout << "Opponent's move: " << opponentMove << std::endl;
+      mvwprintw(window, 1, 1, "Opponent's move: %c", opponentMove);
+      // throw std::runtime_error(buffer);
+
+      // Echo back the response for testing.
+      write(socket, &opponentMove, sizeof(opponentMove));
+    }
+
+    // Reinit frame.:
     // Maybe it's cheaper to cleanup only the points where necessary but given
     // this is all running in a terminal, redrawing the whole frame barely
     // costs anything.

@@ -9,10 +9,10 @@ Server::Server(int port) : port(port) {
     throw std::runtime_error("Error: Unable to create socket.");
   }
 
-  sockaddr_in server_address;
-  server_address.sin_family = AF_INET;
-  server_address.sin_addr.s_addr = INADDR_ANY;
-  server_address.sin_port = htons(port);
+  sockaddr_in serverAddress;
+  serverAddress.sin_family = AF_INET;
+  serverAddress.sin_addr.s_addr = INADDR_ANY;
+  serverAddress.sin_port = htons(port);
 
   // lose the pesky "Address already in use" error message.
   int yes = 1;
@@ -22,11 +22,16 @@ Server::Server(int port) : port(port) {
   }
 
   // Bind the socket to the port.
-  if (bind(serverSocket, (struct sockaddr *)&server_address,
-           sizeof(server_address)) < 0) {
+  if (bind(serverSocket, (struct sockaddr *)&serverAddress,
+           sizeof(serverAddress)) < 0) {
     close(serverSocket);
     throw std::runtime_error("Error: Unable to bind to port 8080.");
   }
+}
+
+Server::~Server() {
+  close(clientSocket);
+  close(serverSocket);
 }
 
 void Server::serve() {
@@ -37,40 +42,32 @@ void Server::serve() {
   }
 
   std::cout << "Server is listening on port " << port << "..." << std::endl;
+  std::cout << "Waiting for the client to connect..." << std::endl;
 
-  while (true) {
-    // Accept incoming connection
-    sockaddr_in clientAddress;
-    socklen_t clientAddressLength = sizeof(clientAddress);
-    int clientSocket =
-        accept(serverSocket, (struct sockaddr *)&clientAddress,
-               &clientAddressLength);
-    if (clientSocket < 0) {
-      close(serverSocket);
-      throw std::runtime_error("Error: Unable to accept incoming connection.");
-    }
-
-    // Handle the request
-    handleRequest(clientSocket);
+  // Block until the client joins.
+  sockaddr_in clientAddress;
+  socklen_t clientAddressLength = sizeof(clientAddress);
+  clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress,
+                        &clientAddressLength);
+  if (clientSocket < 0) {
+    close(serverSocket);
+    throw std::runtime_error("Error: Unable to accept incoming connection.");
   }
+
+  // Convert client IP -> c_str for logging.
+  char clientAddressStr[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &(clientAddress.sin_addr), clientAddressStr,
+            INET_ADDRSTRLEN);
+
+  std::cout << "Client " << clientAddressStr << " joined." << std::endl;
+
+  // Start the game!
+  startGameplay();
 }
 
 // Function to handle incoming requests
-void Server::handleRequest(int clientSocket) {
-  // Read the request.
-  char buffer[1024];
-  int bytesRead = read(clientSocket, buffer, sizeof(buffer));
-  if (bytesRead > 0) {
-    // Print the received HTTP request
-    std::cout << "Received HTTP request:\n" << buffer << std::endl;
-
-    // Send the HTTP response.
-    // Used for testing the server, will be cleaned up to just maintain an
-    // active connection in the upcoming changes.
-    std::string response =
-        "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!\r\n";
-    write(clientSocket, response.c_str(), response.length());
-  }
-  // Close the client socket
-  close(clientSocket);
+void Server::startGameplay() {
+  // Init the game.
+  game.init(clientSocket);
+  game.run();
 }
