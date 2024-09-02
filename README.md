@@ -1,4 +1,5 @@
-![gameplay](./gameplay.gif)
+![multi-player gameplay](./gameplay.gif)
+![single player gameplay](single-player-gameplay.gif)
 
 # Socket Snake
 
