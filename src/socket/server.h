@@ -15,7 +15,6 @@
 class Server {
 private:
   int port, serverSocket, clientSocket;
-  Game game;
 
   void startGameplay();
 

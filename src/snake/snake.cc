@@ -52,7 +52,7 @@ void Snake::input(const int& input) {
   }
 }
 
-MoveState Snake::move(const Pellet& pellet) {
+MoveState Snake::move(const Pellet& pellet, const Snake& other) {
   // Move the tail.
   Point old = head;
   for (auto& t : tail) {
@@ -71,6 +71,13 @@ MoveState Snake::move(const Pellet& pellet) {
   // Check if the snake is eating it's own body.
   for (const auto& t : tail) {
     if (Point::doesOverlap(head, t)) {
+      return MoveState::DEAD;
+    }
+  }
+
+  // Check if the snake is eating the other snake's body.
+  for (const auto& t : other.tail) {
+        if (Point::doesOverlap(head, t)) {
       return MoveState::DEAD;
     }
   }

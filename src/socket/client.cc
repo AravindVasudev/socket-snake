@@ -7,7 +7,7 @@
 #include "../common/constants.h"
 
 Client::Client(char* serverAddress, int serverPort)
-    : serverAddress(serverAddress), serverPort(serverPort), game(false) {
+    : serverAddress(serverAddress), serverPort(serverPort) {
   // Create a socket
   clientSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (clientSocket == -1) {
@@ -32,6 +32,6 @@ Client::~Client() { close(clientSocket); }
 
 void Client::startGameplay() {
   // Init the game.
-  game.init(clientSocket);
+  Game game(false, clientSocket);
   game.run();
 }

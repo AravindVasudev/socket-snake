@@ -25,8 +25,7 @@ private:
   void drawGameOver();
 
 public:
-  Game(bool isServer);
+  Game(bool isServer, const int socket);
   ~Game();
-  void init(const int sockfd);
   void run();
 };

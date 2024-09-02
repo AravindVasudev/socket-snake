@@ -14,7 +14,6 @@ private:
   // string in-between.
   char *serverAddress;
   int serverPort, clientSocket;
-  Game game;
 
 public:
   Client(char *serverAddress, int serverPort);

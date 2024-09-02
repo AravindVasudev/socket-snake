@@ -12,19 +12,8 @@
 #include "../common/constants.h"
 #include "color.h"
 
-Game::Game(bool isServer)
-    : isServer(isServer), player(isServer), opponent(isServer) {};
-
-// The original implementation does all the init stuff in the constructor.
-// Given we have to wait to establish the connect before starting the game,
-// Moved it to a separate fn. Both the server & the client would keep a game
-// object stack initialized & hence will be constructed right away once the
-// server starts and hence this workaround.
-// TODO: Add a game state to ensure run() cannot be called before init().
-void Game::init(const int sockfd) {
-  // Init opponent's socket.
-  socket = sockfd;
-
+Game::Game(const bool isServer, const int socket)
+    : isServer(isServer), player(isServer), opponent(isServer), socket(socket) {
   // Init graphics.
   setlocale(LC_ALL, "");  // Get the terminal outta boomer-mode.
   initscr();
@@ -112,7 +101,7 @@ void Game::run() {
     // opponent get to the pellet at the same time, each one's game would
     // consider they got it. We have to explicitly handle that to keep the
     // points in sync.
-    switch (player.move(pellet)) {
+    switch (player.move(pellet, opponent)) {
       case MoveState::DEAD:
         // We dead :(
         drawGameOver();
@@ -126,7 +115,10 @@ void Game::run() {
     }
 
     // Move the opponent.
-    switch (opponent.move(pellet)) {
+    // The original implementation only had pellet as another object and
+    // hence passing it to the snake was a simple design choice. Now that,
+    // we another snake, maybe redesign this thing?
+    switch (opponent.move(pellet, player)) {
       case MoveState::DEAD:
         // We dead :(
         drawGameOver();

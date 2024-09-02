@@ -27,5 +27,5 @@ public:
   Snake(bool isServer);
   void draw(WINDOW *window);
   void input(const int &input);
-  MoveState move(const Pellet &pellet);
+  MoveState move(const Pellet &pellet, const Snake &other);
 };
