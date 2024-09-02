@@ -7,7 +7,7 @@
 #include "../common/constants.h"
 
 Client::Client(char* serverAddress, int serverPort)
-    : serverAddress(serverAddress), serverPort(serverPort) {
+    : serverAddress(serverAddress), serverPort(serverPort), game(false) {
   // Create a socket
   clientSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (clientSocket == -1) {
@@ -26,22 +26,6 @@ Client::Client(char* serverAddress, int serverPort)
 
   std::cout << "Connected to " << serverAddress << ":" << serverPort
             << std::endl;
-
-  // while (true) {
-  //   int c;
-  //   std::cin >> c;
-
-  //   if (send(clientSocket, &c, sizeof(c), 0) < 0) {
-  //     throw std::runtime_error("Error: Cannot send msg to the server.");
-  //   }
-
-  //   int bytesRead = recv(clientSocket, &c, sizeof(c), 0);
-  //   if (bytesRead > 0) {
-  //     std::cout << "Server said: " << c << std::endl;
-  //   }
-
-  //   usleep(1000000 / FRAME_RATE);
-  // }
 }
 
 Client::~Client() { close(clientSocket); }

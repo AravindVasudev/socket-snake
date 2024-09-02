@@ -16,14 +16,14 @@ enum MoveState {
 };
 
 class Snake {
- private:
+private:
   Point head;
   std::vector<Point> tail;
   Point velocity{-1, 0};
 
   void drawHead(WINDOW *window);
 
- public:
+public:
   Snake(bool isServer);
   void draw(WINDOW *window);
   void input(const int &input);

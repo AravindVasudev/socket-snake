@@ -2,7 +2,7 @@
 
 #include "../common/constants.h"
 
-Server::Server(int port) : port(port) {
+Server::Server(int port) : port(port), game(true) {
   // Create a socket
   serverSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (serverSocket == -1) {
