@@ -13,8 +13,8 @@ constexpr int HEIGHT = 31;
 constexpr int SERVER_SNAKE_X = 20;
 constexpr int SERVER_SNAKE_Y = 20;
 
-constexpr int CLIENT_SNAKE_X = 25;
-constexpr int CLIENT_SNAKE_Y = 25;
+constexpr int CLIENT_SNAKE_X = 10;
+constexpr int CLIENT_SNAKE_Y = 10;
 
 /*******************************************************************************
  * Server Constants

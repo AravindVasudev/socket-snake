@@ -13,7 +13,7 @@
 #include "color.h"
 
 Game::Game(const bool isServer, const int socket)
-    : isServer(isServer), player(isServer), opponent(isServer), socket(socket) {
+    : isServer(isServer), player(isServer), opponent(!isServer), socket(socket) {
   // Init graphics.
   setlocale(LC_ALL, "");  // Get the terminal outta boomer-mode.
   initscr();
