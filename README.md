@@ -1,3 +1,5 @@
+![gameplay](./gameplay.gif)
+
 # Socket Snake
 
 Terminal based two-player snake game.
@@ -12,6 +14,9 @@ implemented over my [pacman clone](https://github.com/AravindVasudev/pacman).
 ## TODOs
 
 - [ ] Exit cleanly when either of the player dies.
+- [ ] Make both players different color.
+- [ ] Make the UX better.
+- [ ] Fix Makefile to remove relative imports of headerfiles.
 
 ## Building
 
