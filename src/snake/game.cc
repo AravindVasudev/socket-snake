@@ -58,8 +58,8 @@ void Game::drawGameOver(const bool win) {
 
   mvwprintw(window, WIDTH / 2 - 3, HEIGHT / 2 - 3,
             win ? "You won! :)" : "You lost! :(");
-  mvwprintw(window, WIDTH / 2 - 2, HEIGHT / 2 - 3,
-            "Your score: %d | Opponent Score: %d", score, opponentScore);
+  mvwprintw(window, WIDTH / 2 - 2, 2, "Your score: %d | Opponent Score: %d",
+            score, opponentScore);
   wrefresh(window);
 }
 
