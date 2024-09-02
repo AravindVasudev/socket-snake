@@ -47,14 +47,19 @@ Game::~Game() {
   endwin();
 }
 
-void Game::drawScore() { mvwprintw(window, 0, 2, "Score: %d", score); }
+void Game::drawScore() {
+  mvwprintw(window, 0, 2, "My Score: %d | Opponent: %d", score, opponentScore);
+}
 
-void Game::drawGameOver() {
+void Game::drawGameOver(const bool win) {
   wclear(window);
   box(window, 0, 0);
   // TODO: Fix centering.
-  mvwprintw(window, WIDTH / 2 - 3, HEIGHT / 2 - 3, "You lost! Your score: %d",
-            score);
+
+  mvwprintw(window, WIDTH / 2 - 3, HEIGHT / 2 - 3,
+            win ? "You won! :)" : "You lost! :(");
+  mvwprintw(window, WIDTH / 2 - 2, HEIGHT / 2 - 3,
+            "Your score: %d | Opponent Score: %d", score, opponentScore);
   wrefresh(window);
 }
 
@@ -104,7 +109,7 @@ void Game::run() {
     switch (player.move(pellet, opponent)) {
       case MoveState::DEAD:
         // We dead :(
-        drawGameOver();
+        drawGameOver(false);
         return;
       case MoveState::EAT:
         score++;
@@ -121,10 +126,10 @@ void Game::run() {
     switch (opponent.move(pellet, player)) {
       case MoveState::DEAD:
         // We dead :(
-        drawGameOver();
+        drawGameOver(true);
         return;
       case MoveState::EAT:
-        score++;
+        opponentScore++;
         pellet.move();  // Relocate the pellet.
         break;
       case MoveState::NOOP:

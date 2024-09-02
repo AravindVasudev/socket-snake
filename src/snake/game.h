@@ -15,14 +15,16 @@ private:
   WINDOW *window; // Game window.
   Snake player, opponent;
   Pellet pellet;
-  int score{};
+
+  // Maybe move this into the snake?
+  int score{}, opponentScore{};
 
   // The game holds an agnostic TCP socket id which it uses to read it's
   // opponent's move.
   int socket;
 
   void drawScore();
-  void drawGameOver();
+  void drawGameOver(const bool win);
 
 public:
   Game(bool isServer, const int socket);
