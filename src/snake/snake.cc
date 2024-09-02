@@ -5,6 +5,17 @@
 
 #include "color.h"
 
+Snake::Snake(bool isServer) {
+  // TODO: Bad impl, fix this.
+  if (isServer) {
+    head.X = SERVER_SNAKE_X;
+    head.Y = SERVER_SNAKE_Y;
+  } else {
+    head.X = CLIENT_SNAKE_X;
+    head.Y = CLIENT_SNAKE_Y;
+  }
+};
+
 void Snake::input(const int& input) {
   switch (input) {
     case 'w':

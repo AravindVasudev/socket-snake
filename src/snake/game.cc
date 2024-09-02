@@ -12,6 +12,9 @@
 #include "../common/constants.h"
 #include "color.h"
 
+Game::Game(bool isServer)
+    : isServer(isServer), player(isServer), opponent(isServer) {};
+
 // The original implementation does all the init stuff in the constructor.
 // Given we have to wait to establish the connect before starting the game,
 // Moved it to a separate fn. Both the server & the client would keep a game
@@ -101,10 +104,10 @@ void Game::run() {
     box(window, 0, 0);
 
     // Process snake's move.
-    snake.input(input);
+    player.input(input);
 
     // Actually move the snake.
-    switch (snake.move(pellet)) {
+    switch (player.move(pellet)) {
       case MoveState::DEAD:
         // We dead :(
         drawGameOver();
@@ -118,7 +121,8 @@ void Game::run() {
     }
 
     // Draw all objects.
-    snake.draw(window);
+    player.draw(window);
+    opponent.draw(window);
     pellet.draw(window);
     drawScore();
 
