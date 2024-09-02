@@ -37,6 +37,8 @@ int main(int argc, char *argv[]) {
     }
 
     Client client(argv[2], atoi(argv[3]));
+    client.startGameplay();
+
     return 0;
   }
 

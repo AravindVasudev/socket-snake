@@ -24,21 +24,30 @@ Client::Client(char* serverAddress, int serverPort)
     throw std::runtime_error("Error: Cannot connect to the server.");
   }
 
-  while (true) {
-    char c;
-    std::cin >> c;
+  std::cout << "Connected to " << serverAddress << ":" << serverPort
+            << std::endl;
 
-    if (send(clientSocket, &c, sizeof(c), 0) < 0) {
-      throw std::runtime_error("Error: Cannot send msg to the server.");
-    }
+  // while (true) {
+  //   int c;
+  //   std::cin >> c;
 
-    int bytesRead = recv(clientSocket, &c, sizeof(c), 0);
-    if (bytesRead > 0) {
-      std::cout << "Server said: " << c << std::endl;
-    }
+  //   if (send(clientSocket, &c, sizeof(c), 0) < 0) {
+  //     throw std::runtime_error("Error: Cannot send msg to the server.");
+  //   }
 
-    usleep(1000000 / FRAME_RATE);
-  }
+  //   int bytesRead = recv(clientSocket, &c, sizeof(c), 0);
+  //   if (bytesRead > 0) {
+  //     std::cout << "Server said: " << c << std::endl;
+  //   }
+
+  //   usleep(1000000 / FRAME_RATE);
+  // }
 }
 
 Client::~Client() { close(clientSocket); }
+
+void Client::startGameplay() {
+  // Init the game.
+  game.init(clientSocket);
+  game.run();
+}

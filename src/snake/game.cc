@@ -74,22 +74,23 @@ void Game::run() {
       break;
     }
 
-    // Opponent's move. We currently only read one character.
+    // Pass it to the opponent.
     // In the current impl, both instances play the game by themselves and
-    // only share the opponent's input. This works because the rand() is not
+    // only share the inputs. This works because the rand() is not
     // seeded and both the instances generate pellets at the same location.
     // Ideally, the instances should be sharing more info. Any drop in
     // connection will disrupt the game instances.
+    if (write(socket, &input, sizeof(input)) < 0) {
+      throw std::runtime_error("Cannot communicate with client.");
+    }
+
+    // Read opponent's move.
     int opponentMove = '\0';
     int bytesRead =
         recv(socket, &opponentMove, sizeof(opponentMove), MSG_DONTWAIT);
-    if (bytesRead > 0) {
-      // std::cout << "Opponent's move: " << opponentMove << std::endl;
-      mvwprintw(window, 1, 1, "Opponent's move: %c", opponentMove);
-      // throw std::runtime_error(buffer);
 
-      // Echo back the response for testing.
-      write(socket, &opponentMove, sizeof(opponentMove));
+    if (bytesRead > 0) {
+      mvwprintw(window, 0, 2, "Read: %c", opponentMove);
     }
 
     // Reinit frame.:
