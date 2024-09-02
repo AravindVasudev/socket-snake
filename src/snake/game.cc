@@ -92,10 +92,6 @@ void Game::run() {
     int bytesRead =
         recv(socket, &opponentMove, sizeof(opponentMove), MSG_DONTWAIT);
 
-    if (bytesRead > 0) {
-      mvwprintw(window, 0, 2, "Read: %c", opponentMove);
-    }
-
     // Reinit frame.:
     // Maybe it's cheaper to cleanup only the points where necessary but given
     // this is all running in a terminal, redrawing the whole frame barely
@@ -106,8 +102,31 @@ void Game::run() {
     // Process snake's move.
     player.input(input);
 
+    // If we got an opponent move, process it.
+    if (bytesRead > 0) {
+      opponent.input(opponentMove);
+    }
+
     // Actually move the snake.
+    // This impl could have race-conditions. Say if both the player and the
+    // opponent get to the pellet at the same time, each one's game would
+    // consider they got it. We have to explicitly handle that to keep the
+    // points in sync.
     switch (player.move(pellet)) {
+      case MoveState::DEAD:
+        // We dead :(
+        drawGameOver();
+        return;
+      case MoveState::EAT:
+        score++;
+        pellet.move();  // Relocate the pellet.
+        break;
+      case MoveState::NOOP:
+        break;  //  NOOP
+    }
+
+    // Move the opponent.
+    switch (opponent.move(pellet)) {
       case MoveState::DEAD:
         // We dead :(
         drawGameOver();
